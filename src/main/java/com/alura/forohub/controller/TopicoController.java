@@ -6,11 +6,13 @@ import com.alura.forohub.repository.TopicoRepository;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/topicos")
@@ -42,5 +44,17 @@ public class TopicoController {
     @GetMapping
     public List<Topico> listarTopicos() {
         return repository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Topico> detallarTopico(@PathVariable Long id) {
+
+        Optional<Topico> topicoOptional = repository.findById(id);
+
+        if (topicoOptional.isPresent()) {
+            return ResponseEntity.ok(topicoOptional.get());
+        }
+
+        return ResponseEntity.notFound().build();
     }
 }
