@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/topicos")
@@ -36,5 +37,10 @@ public class TopicoController {
         topico.setCursoId(datos.cursoId());
 
         repository.save(topico);
+    }
+
+    @GetMapping
+    public List<Topico> listarTopicos() {
+        return repository.findAll();
     }
 }
