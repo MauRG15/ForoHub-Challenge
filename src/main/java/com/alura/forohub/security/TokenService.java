@@ -38,4 +38,19 @@ public class TokenService {
                 .plusHours(expiration)
                 .toInstant(ZoneOffset.of("-06:00"));
     }
+
+    public String validarToken(String token) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+
+            return JWT.require(algorithm)
+                    .withIssuer("forohub")
+                    .build()
+                    .verify(token)
+                    .getSubject();
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }

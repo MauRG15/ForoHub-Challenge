@@ -3,8 +3,9 @@ package com.alura.forohub.entity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+
 @Entity
-@Table(name = "topico")
+@Table(name = "topicos")
 public class Topico {
 
     @Id
@@ -19,65 +20,65 @@ public class Topico {
 
     private String status;
 
-    private Long autorId;
+    @ManyToOne
+    @JoinColumn(name = "autor_id")
+    private Usuario autor;
 
-    private Long cursoId;
+    @ManyToOne
+    @JoinColumn(name = "curso_id")
+    private Curso curso;
 
-    // Getters y Setters
+    // getters y setters
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getMensaje() {
-        return mensaje;
-    }
-
-    public void setMensaje(String mensaje) {
-        this.mensaje = mensaje;
     }
 
     public String getTitulo() {
         return titulo;
     }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
+    public String getMensaje() {
+        return mensaje;
     }
 
     public LocalDateTime getFechaCreacion() {
         return fechaCreacion;
     }
 
-    public void setFechaCreacion(LocalDateTime fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
-    }
-
     public String getStatus() {
         return status;
+    }
+
+    public Usuario getAutor() {
+        return autor;
+    }
+
+    public Curso getCurso() {
+        return curso;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public void setMensaje(String mensaje) {
+        this.mensaje = mensaje;
+    }
+
+    public void setFechaCreacion(LocalDateTime fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
     }
 
     public void setStatus(String status) {
         this.status = status;
     }
 
-    public Long getAutorId() {
-        return autorId;
+    public void setAutor(Usuario autor) {
+        this.autor = autor;
     }
 
-    public void setAutorId(Long autorId) {
-        this.autorId = autorId;
-    }
-
-    public Long getCursoId() {
-        return cursoId;
-    }
-
-    public void setCursoId(Long cursoId) {
-        this.cursoId = cursoId;
+    public void setCurso(Curso curso) {
+        this.curso = curso;
     }
 }

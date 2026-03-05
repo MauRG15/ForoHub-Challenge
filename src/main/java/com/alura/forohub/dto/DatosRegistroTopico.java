@@ -15,5 +15,5 @@ public record DatosRegistroTopico(
         Long autorId,
 
         @NotNull
-        Long cursoId
+        String curso
 ) {}

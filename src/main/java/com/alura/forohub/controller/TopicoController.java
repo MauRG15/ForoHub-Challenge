@@ -1,8 +1,12 @@
 package com.alura.forohub.controller;
 
 import com.alura.forohub.dto.DatosRegistroTopico;
+import com.alura.forohub.entity.Curso;
 import com.alura.forohub.entity.Topico;
+import com.alura.forohub.entity.Usuario;
+import com.alura.forohub.repository.CursoRepository;
 import com.alura.forohub.repository.TopicoRepository;
+import com.alura.forohub.repository.UsuarioRepository;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,24 +25,38 @@ public class TopicoController {
     @Autowired
     private TopicoRepository repository;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private CursoRepository cursoRepository;
+
     @PostMapping
     @Transactional
-    public void registrar(@RequestBody @Valid DatosRegistroTopico datos) {
+    public ResponseEntity<?> registrar(@RequestBody @Valid DatosRegistroTopico datos) {
 
-        // Regla de negocio: no duplicados
         if (repository.existsByTituloAndMensaje(datos.titulo(), datos.mensaje())) {
-            throw new RuntimeException("Tópico duplicado no permitido");
+            return ResponseEntity.badRequest().body("Tópico duplicado");
         }
+
+        Usuario autor = usuarioRepository.findById(datos.autorId())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        Curso curso = cursoRepository.findByNombre(datos.curso())
+                .orElseThrow(() -> new RuntimeException("Curso no encontrado"));
 
         Topico topico = new Topico();
         topico.setTitulo(datos.titulo());
         topico.setMensaje(datos.mensaje());
         topico.setFechaCreacion(LocalDateTime.now());
         topico.setStatus("ABIERTO");
-        topico.setAutorId(datos.autorId());
-        topico.setCursoId(datos.cursoId());
+
+        topico.setAutor(autor);
+        topico.setCurso(curso);
 
         repository.save(topico);
+
+        return ResponseEntity.ok(topico);
     }
 
     @GetMapping
@@ -70,18 +88,18 @@ public class TopicoController {
             return ResponseEntity.notFound().build();
         }
 
-        // Regla de negocio: no duplicados
-        if (repository.existsByTituloAndMensaje(datos.titulo(), datos.mensaje())) {
-            return ResponseEntity.badRequest()
-                    .body("Ya existe un tópico con el mismo título y mensaje");
-        }
-
         Topico topico = optionalTopico.get();
+
+        Usuario autor = usuarioRepository.findById(datos.autorId())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        Curso curso = cursoRepository.findByNombre(datos.curso())
+                .orElseThrow(() -> new RuntimeException("Curso no encontrado"));
 
         topico.setTitulo(datos.titulo());
         topico.setMensaje(datos.mensaje());
-        topico.setAutorId(datos.autorId());
-        topico.setCursoId(datos.cursoId());
+        topico.setAutor(autor);
+        topico.setCurso(curso);
 
         return ResponseEntity.ok(topico);
     }
